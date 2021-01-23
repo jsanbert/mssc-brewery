@@ -29,9 +29,8 @@ public class BeerController {
         return new ResponseEntity<>(beerService.getBeerById(beerId), HttpStatus.OK);
     }
 
-    @PostMapping({"/{beerId}"})
-    public ResponseEntity<BeerDto> saveNewBeer(@PathVariable("beerId") UUID beerId,
-                                                       @RequestBody BeerDto beerDto){
+    @PostMapping
+    public ResponseEntity<BeerDto> saveNewBeer(@RequestBody BeerDto beerDto) {
         BeerDto savedBeer = beerService.saveBeer(beerDto);
 
         HttpHeaders headers = new HttpHeaders();
