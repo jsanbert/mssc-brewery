@@ -30,9 +30,8 @@ public class CustomerController {
         return new ResponseEntity<>(customerService.getCustomerById(customerId), HttpStatus.OK);
     }
 
-    @PostMapping({"/{customerId}"})
-    public ResponseEntity<CustomerDto> saveNewCustomer(@PathVariable("customerId") UUID customerId,
-                                                       @RequestBody CustomerDto customerDto){
+    @PostMapping
+    public ResponseEntity<CustomerDto> saveNewCustomer(@RequestBody CustomerDto customerDto){
         CustomerDto savedCustomer = customerService.saveCustomer(customerDto);
 
         HttpHeaders headers = new HttpHeaders();
