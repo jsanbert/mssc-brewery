@@ -2,6 +2,7 @@ package guru.springframework.msscbrewery.errors;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-
 /**
  * Kudos http://www.petrikainulainen.net/programming/spring-framework/spring-from-the-trenches-adding-validation-to-a-rest-api/
  *
@@ -23,18 +22,18 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 @ControllerAdvice
 public class MethodArgumentNotValidExceptionHandler {
 
-    @ResponseStatus(BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Error methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
-        List<org.springframework.validation.FieldError> fieldErrors = result.getFieldErrors();
+        List<FieldError> fieldErrors = result.getFieldErrors();
         return processFieldErrors(fieldErrors);
     }
 
-    private Error processFieldErrors(List<org.springframework.validation.FieldError> fieldErrors) {
-        Error error = new Error(BAD_REQUEST.value(), "validation error");
-        for (org.springframework.validation.FieldError fieldError: fieldErrors) {
+    private Error processFieldErrors(List<FieldError> fieldErrors) {
+        Error error = new Error(HttpStatus.BAD_REQUEST.value(), "validation error");
+        for (FieldError fieldError: fieldErrors) {
             error.addFieldError(fieldError.getObjectName(), fieldError.getField(), fieldError.getDefaultMessage());
         }
         return error;
@@ -43,11 +42,12 @@ public class MethodArgumentNotValidExceptionHandler {
     static class Error {
         private final int status;
         private final String message;
-        private List<FieldError> fieldErrors = new ArrayList<>();
+        private List<FieldError> fieldErrors;
 
         Error(int status, String message) {
             this.status = status;
             this.message = message;
+            this.fieldErrors = new ArrayList<>();
         }
 
         public int getStatus() {
